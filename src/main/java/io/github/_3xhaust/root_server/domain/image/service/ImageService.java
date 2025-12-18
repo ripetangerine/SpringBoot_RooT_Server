@@ -1,5 +1,7 @@
 package io.github._3xhaust.root_server.domain.image.service;
 
+import com.sksamuel.scrimage.ImmutableImage;
+import com.sksamuel.scrimage.webp.WebpWriter;
 import io.github._3xhaust.root_server.domain.image.entity.Image;
 import io.github._3xhaust.root_server.domain.image.repository.ImageRepository;
 import io.github._3xhaust.root_server.domain.image.dto.ImageUploadResponse;
@@ -34,37 +36,51 @@ public class ImageService {
 
     @Transactional
     public ImageUploadResponse saveImage(MultipartFile file) throws IOException {
-        String ext = "";
-        String original = file.getOriginalFilename();
-        if (original != null && original.contains(".")) {
-            ext = original.substring(original.lastIndexOf('.'));
-        }
-        String now = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String filename = now + "_" + UUID.randomUUID() + ext;
+        String now = java.time.LocalDateTime.now().format(
+                java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+        );
+        String filename = now + "_" + UUID.randomUUID() + ".webp";
         File dest = new File(uploadDir, filename);
+
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }
-        file.transferTo(dest.getAbsoluteFile());
-        Image image = Image.builder().url("/api/v1/images/" + filename).build();
-        imageRepository.save(image);
-        return new ImageUploadResponse(image.getId(), image.getUrl());
+
+        ImmutableImage image = ImmutableImage.loader().fromStream(file.getInputStream());
+        WebpWriter writer = WebpWriter.DEFAULT.withQ(90);
+        image.output(writer, dest);
+
+        Image savedImage = Image.builder()
+                .url("/api/v1/images/" + filename)
+                .build();
+        imageRepository.save(savedImage);
+
+        return new ImageUploadResponse(savedImage.getId(), savedImage.getUrl());
     }
 
     @Transactional
     public ImageUploadResponse saveBase64Image(String base64) throws IOException {
-        String now = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String filename = now + "_" + UUID.randomUUID() + ".jpg";
+        String now = java.time.LocalDateTime.now().format(
+                java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+        );
+        String filename = now + "_" + UUID.randomUUID() + ".webp";
         File dest = new File(uploadDir, filename);
+
         if (!dest.getParentFile().exists()) {
             dest.getParentFile().mkdirs();
         }
-        try (FileOutputStream fos = new FileOutputStream(dest)) {
-            fos.write(Base64.getDecoder().decode(base64));
-        }
-        Image image = Image.builder().url("/api/v1/images/" + filename).build();
-        imageRepository.save(image);
-        return new ImageUploadResponse(image.getId(), image.getUrl());
+
+        byte[] decodedBytes = Base64.getDecoder().decode(base64);
+        ImmutableImage image = ImmutableImage.loader().fromBytes(decodedBytes);
+        WebpWriter writer = WebpWriter.DEFAULT.withQ(90);
+        image.output(writer, dest);
+
+        Image savedImage = Image.builder()
+                .url("/api/v1/images/" + filename)
+                .build();
+        imageRepository.save(savedImage);
+
+        return new ImageUploadResponse(savedImage.getId(), savedImage.getUrl());
     }
 
     public byte[] loadImage(String filename) throws IOException {
@@ -86,6 +102,7 @@ public class ImageService {
                 .filter(java.util.Objects::nonNull)
                 .map(Image::getId)
                 .toList());
+
         for (Image image : allImages) {
             if (!usedImageIds.contains(image.getId())) {
                 String url = image.getUrl();
