@@ -7,7 +7,6 @@ import io.github._3xhaust.root_server.domain.community.entity.Community;
 import io.github._3xhaust.root_server.domain.community.exception.CommunityErrorCode;
 import io.github._3xhaust.root_server.domain.community.exception.CommunityException;
 import io.github._3xhaust.root_server.domain.community.repository.CommunityRepository;
-import io.github._3xhaust.root_server.domain.community.repository.PostRepository;
 import io.github._3xhaust.root_server.domain.user.entity.User;
 import io.github._3xhaust.root_server.domain.user.exception.UserErrorCode;
 import io.github._3xhaust.root_server.domain.user.exception.UserException;
@@ -15,11 +14,11 @@ import io.github._3xhaust.root_server.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 
 @Slf4j

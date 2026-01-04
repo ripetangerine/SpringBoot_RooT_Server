@@ -12,15 +12,13 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostResponse {
+public class PostListResponse {
+
     private Long id;
     private AuthorInfo author;
-
     private String title;
     private String body;
     private Instant createdAt;
-
-    private Long communityId;
 
     @Getter
     @Builder
@@ -31,8 +29,10 @@ public class PostResponse {
         private String name;
     }
 
-    public static PostResponse of (Post post){
-        return PostResponse.builder()
+
+    public static PostListResponse of (Post post){
+
+        return PostListResponse.builder()
                 .id(post.getId())
                 .author(AuthorInfo.builder()
                         .id(post.getAuthor().getId())
@@ -40,9 +40,7 @@ public class PostResponse {
                         .build())
                 .title(post.getTitle())
                 .body(post.getBody())
-                .communityId(post.getCommunityId())
                 .createdAt(post.getCreatedAt())
                 .build();
     }
-
 }
