@@ -35,6 +35,12 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
 
+    // spring websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.webjars:webjars-locator-core")
+    implementation("org.webjars:sockjs-client:1.5.1")
+    implementation("org.webjars:stomp-websocket:2.3.4")
+
     runtimeOnly("org.postgresql:postgresql")
 
     compileOnly("org.projectlombok:lombok")
