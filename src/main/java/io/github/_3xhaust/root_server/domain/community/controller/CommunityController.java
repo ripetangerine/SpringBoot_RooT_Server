@@ -42,7 +42,6 @@ public class CommunityController {
             @Valid
             CreateCommunityRequest request
     ){
-
         UserDetails userDetails = (UserDetails) authentication.getPrincipal(); //로그인 유저 정보
         CommunityResponse newCommunity = communityService.createCommunity(userDetails.getUsername(), request);
         return ApiResponse.ok(newCommunity, "new roots are made!");
