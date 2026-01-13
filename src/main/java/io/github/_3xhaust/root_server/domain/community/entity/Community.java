@@ -19,7 +19,7 @@ public class Community {
 
     // TODO : 오류 가능성 잇음
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_user_id", nullable = false)
+    @JoinColumn(name = "id", nullable = false)
     private User createdBy;
 
     // 커뮤니티 이름
