@@ -16,7 +16,8 @@ import java.util.List;
 public class ChatRoomDetailResponse {
 
     private ChatRoom chatRoom;
-    private List<ChatMessage> messages;
+    private Long messageId;
+    private String messageContent;
     private Long nextCursor;
 
     public static ChatRoomDetailResponse of(ChatRoom chatRoom, List<ChatMessage> messages, Long nextCursor) {

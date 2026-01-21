@@ -1,6 +1,7 @@
 package io.github._3xhaust.root_server.domain.chatroom.controller;
 
 import io.github._3xhaust.root_server.domain.chatroom.dto.req.ChatMessageEvent;
+import io.github._3xhaust.root_server.domain.chatroom.service.ChatMessageService;
 import io.github._3xhaust.root_server.domain.chatroom.service.ChatRoomService;
 import io.github._3xhaust.root_server.global.security.service.UserContext;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class StompChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatRoomService chatRoomService;
+    private final ChatMessageService chatMessageService;
 
     @MessageMapping("/chat.send") // 실제 경로: /app/chat.send
     public void send(
@@ -29,10 +31,9 @@ public class StompChatController {
             ChatMessageEvent req
     ) {
         Long senderId = userContext.getUserId();
+        chatRoomService.assertMember(req.getRoomId(), senderId);
 
-        chatRoomService.assertMember(req.getRoomId(), senderId); //인가
-
-        ChatMessageEvent event = chatRoomService.saveAndBuildEvent(
+        ChatMessageEvent event = chatMessageService.saveAndBuildEvent(
                 req.getRoomId(), senderId, req.getContent(), req.getClientMessageId());
 
         // 클라이언트 구독 -> /topic/chat-rooms/{roomId}

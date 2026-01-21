@@ -22,15 +22,15 @@ public class ChatRoom {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product; //TradeId
+    @JoinColumn(name = "product_id", nullable=false)
+    private Product product; // in trade item
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller_id", nullable=false)
     private User seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyer_id")
+    @JoinColumn(name = "buyer_id", nullable = false)
     private User buyer;
 
     @CreatedDate
@@ -39,11 +39,13 @@ public class ChatRoom {
 
     private Instant deletedAt;
 
-    @Column(nullable = false)
-    private boolean deleted = false; // 기본값 설정
-
     @Column(columnDefinition = "TEXT")
     private String status; // default : ALL .. (이외의 상태 추가가능, 상태는 String 형태로 축척)
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+    }
 
     @Builder
     public ChatRoom(Product product, User seller, User buyer) {
@@ -51,15 +53,14 @@ public class ChatRoom {
         this.seller = seller;
         this.buyer = buyer;
         this.status = String.valueOf(ChatRoomSortType.ALL); // 생성 시 기본값
-        this.deleted = false;
     }
-
-    public boolean isParticipant(Long userId) {
-        return seller.getId().equals(userId) || buyer.getId().equals(userId);
-    }
-
-    public User getTargetUser(Long currentUserId) {
-        return seller.getId().equals(currentUserId) ? buyer : seller;
-    }
+//
+//    public boolean isParticipant(Long userId) {
+//        return seller.getId().equals(userId) && !buyer.getId().equals(userId);
+//    }
+//
+//    public User getTargetUser(Long currentUserId) {
+//        return seller.getId().equals(currentUserId) ? buyer : seller;
+//    }
 
 }
