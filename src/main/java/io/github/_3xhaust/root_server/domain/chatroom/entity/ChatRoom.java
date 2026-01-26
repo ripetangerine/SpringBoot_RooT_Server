@@ -1,6 +1,6 @@
 package io.github._3xhaust.root_server.domain.chatroom.entity;
 
-import io.github._3xhaust.root_server.domain.chatroom.dto.req.ChatRoomSortType;
+import io.github._3xhaust.root_server.domain.chatroom.dto.ChatRoomSortType;
 import io.github._3xhaust.root_server.domain.product.entity.Product;
 import io.github._3xhaust.root_server.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -54,13 +54,8 @@ public class ChatRoom {
         this.buyer = buyer;
         this.status = String.valueOf(ChatRoomSortType.ALL); // 생성 시 기본값
     }
-//
-//    public boolean isParticipant(Long userId) {
-//        return seller.getId().equals(userId) && !buyer.getId().equals(userId);
-//    }
-//
-//    public User getTargetUser(Long currentUserId) {
-//        return seller.getId().equals(currentUserId) ? buyer : seller;
-//    }
 
+    public boolean isParticipant(Long userId) {
+        return seller.getId().equals(userId) || buyer.getId().equals(userId);
+    }
 }

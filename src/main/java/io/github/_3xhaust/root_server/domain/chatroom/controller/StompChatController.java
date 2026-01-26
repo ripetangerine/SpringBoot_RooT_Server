@@ -1,6 +1,6 @@
 package io.github._3xhaust.root_server.domain.chatroom.controller;
 
-import io.github._3xhaust.root_server.domain.chatroom.dto.req.ChatMessageEvent;
+import io.github._3xhaust.root_server.domain.chatroom.dto.res.ChatMessageEvent;
 import io.github._3xhaust.root_server.domain.chatroom.service.ChatMessageService;
 import io.github._3xhaust.root_server.domain.chatroom.service.ChatRoomService;
 import io.github._3xhaust.root_server.global.security.service.UserContext;
@@ -25,7 +25,9 @@ public class StompChatController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
 
-    @MessageMapping("/chat.send") // 실제 경로: /app/chat.send
+    @MessageMapping("/chat.send")
+    // real path :  /app/chat.send
+    // client -> server
     public void send(
             @AuthenticationPrincipal UserContext userContext,
             ChatMessageEvent req
@@ -36,7 +38,7 @@ public class StompChatController {
         ChatMessageEvent event = chatMessageService.saveAndBuildEvent(
                 req.getRoomId(), senderId, req.getContent(), req.getClientMessageId());
 
-        // 클라이언트 구독 -> /topic/chat-rooms/{roomId}
+        // sub client (from server) -> /topic/chat-rooms/{roomId}
         messagingTemplate.convertAndSend("/topic/chat-rooms/" + req.getRoomId(), event);
     }
 }

@@ -1,4 +1,4 @@
-package io.github._3xhaust.root_server.domain.chatroom.dto.req;
+package io.github._3xhaust.root_server.domain.chatroom.dto.res;
 
 import io.github._3xhaust.root_server.domain.chatroom.entity.ChatMessage;
 import lombok.AllArgsConstructor;
@@ -8,11 +8,15 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+/**
+ * it's for socket res dto
+ * chatMessageResponse should separate obj
+ */
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessageEvent { /// == chatMessageResponse
+public class ChatMessageEvent {
     private Long messageId;
     private Long roomId;
     private Long senderId;

@@ -1,9 +1,8 @@
 package io.github._3xhaust.root_server.domain.chatroom.controller;
 
-import io.github._3xhaust.root_server.domain.chatroom.dto.req.ChatMessageEvent;
-import io.github._3xhaust.root_server.domain.chatroom.dto.req.ChatRoomSortType;
+import io.github._3xhaust.root_server.domain.chatroom.dto.ChatRoomSortType;
+import io.github._3xhaust.root_server.domain.chatroom.dto.res.ChatMessageEvent;
 import io.github._3xhaust.root_server.domain.chatroom.dto.res.ChatRoomDetailResponse;
-import io.github._3xhaust.root_server.domain.chatroom.dto.res.ChatRoomListResponse;
 import io.github._3xhaust.root_server.domain.chatroom.dto.res.ChatRoomResponse;
 import io.github._3xhaust.root_server.domain.chatroom.service.ChatMessageService;
 import io.github._3xhaust.root_server.domain.chatroom.service.ChatRoomService;
@@ -31,40 +30,41 @@ public class ChatroomController {
             @AuthenticationPrincipal UserContext userContext,
             @PathVariable Long productId
     ) {
-//        Long buyerId = 1L; // 예시
         Long buyerId = userContext.getUserId();
         return ApiResponse.ok(chatRoomService.getOrCreate(productId, buyerId));
     }
 
     // 채팅방 전체 가져오기
     @GetMapping("/{sort}")
-    public ApiResponse<List<ChatRoomListResponse>> getChatRoomList(
+    public ApiResponse<List<ChatRoomResponse>> getChatRoomList(
             @AuthenticationPrincipal UserContext userContext,
             @PathVariable ChatRoomSortType sortType
     ){
-        List<ChatRoomListResponse> chatRoomList = chatRoomService.getChatRooms(userContext.getUserId(), sortType);
-        return ApiResponse.ok(chatRoomList);
+        return ApiResponse.ok(
+                chatRoomService.getChatRooms(userContext.getUserId(), sortType)
+        );
     }
 
     /**
-     * 채팅방 처음 들어갓을때 (터치후)
+     * chatRoom에 대한 mesage, user 정보 가져오기
      */
     @GetMapping("/{roomId}")
     public ApiResponse<ChatRoomDetailResponse> getRoomDetail(
+            @AuthenticationPrincipal UserContext userContext,
             @PathVariable Long roomId,
             @RequestParam(required = false) Long cursorId, //가장 최근에 읽은 메세지 ID
             @RequestParam(defaultValue="30") int size
     ) {
-        // TODO: assertMember(roomId, userId) 권장
+        chatRoomService.assertMember(roomId, userContext.getUserId());
         return ApiResponse.ok(chatRoomService.getRoomDetail(roomId, cursorId, size));
     }
 
     /**
      * 메시지 히스토리(페이징)
-     * 다른 페이지로 움직이는 이벤트를 했을때 상태 변경
+     * 위로 스크롤 시 상태 변경
      */
     @GetMapping("/{roomId}/messages")
-    public ApiResponse<ChatMessageEvent> getMessages(
+    public ApiResponse<List<ChatMessageEvent>> getMessages(
             @PathVariable Long roomId,
             @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "30") int size

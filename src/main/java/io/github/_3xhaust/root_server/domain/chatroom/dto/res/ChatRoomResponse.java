@@ -18,7 +18,7 @@ public class ChatRoomResponse {
     private Long sellerId;
     private Long buyerId;
     private Instant deletedAt;
-    private String status;
+    private String status; // ALL, not Read, ..
 
     public static ChatRoomResponse of (ChatRoom chatRoom){
         return ChatRoomResponse.builder()
@@ -29,9 +29,5 @@ public class ChatRoomResponse {
                 .deletedAt(chatRoom.getDeletedAt())
                 .status(chatRoom.getStatus())
                 .build();
-    }
-
-    public boolean isParticipant(Long userId) {
-        return this.sellerId.equals(userId) || this.buyerId.equals(userId);
     }
 }

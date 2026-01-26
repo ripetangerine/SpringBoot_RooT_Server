@@ -1,4 +1,4 @@
-package io.github._3xhaust.root_server.domain.chatroom.dto.req;
+package io.github._3xhaust.root_server.domain.chatroom.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
