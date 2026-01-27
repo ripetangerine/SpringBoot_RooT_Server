@@ -39,6 +39,7 @@ public class StompChatController {
                 req.getRoomId(), senderId, req.getContent(), req.getClientMessageId());
 
         // sub client (from server) -> /topic/chat-rooms/{roomId}
+        // 전체 구독을 의미하는 Topic
         messagingTemplate.convertAndSend("/topic/chat-rooms/" + req.getRoomId(), event);
     }
 }
