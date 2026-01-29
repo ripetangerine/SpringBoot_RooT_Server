@@ -49,7 +49,7 @@ public class StompHandler implements ChannelInterceptor {
                     log.info("websocket up~ userId: {}, email: {}", userId, email);
                 } catch (Exception e){
                     log.error("WebSocket auth down.. {}", e.getMessage());
-                    throw new MessagingException("JWT 인증 실패");
+                    throw new MessagingException("JWT auth failed");
                 }
             }
         }
