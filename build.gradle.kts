@@ -33,6 +33,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("com.sksamuel.scrimage:scrimage-core:4.3.5")
+    implementation("com.sksamuel.scrimage:scrimage-webp:4.3.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
 

@@ -34,7 +34,7 @@ public class ChatRoomService {
         Product productInTrade = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("not exist product"));
 
-        return chatRoomRepository.findByProductId(productId)
+        ChatRoom chatRoom = chatRoomRepository.findByProductId(productId)
                 .orElseGet(() -> {
                     ChatRoom newRoom = ChatRoom.builder()
                             .product(productInTrade)
@@ -43,6 +43,8 @@ public class ChatRoomService {
                             .build();
                     return chatRoomRepository.save(newRoom);
                 });
+
+        return ChatRoomResponse.of(chatRoom);
     }
 
     /**
@@ -51,8 +53,10 @@ public class ChatRoomService {
     @Transactional(readOnly = true)
     public ChatRoomDetailResponse getRoomDetail(Long roomId, Long cursor, int size){
         Pageable pageable = PageRequest.of(0, size);
-        ChatRoom chatRoomEntity = chatRoomRepository.findById(roomId);
-        List<ChatMessage> chatMessagesEntity = chatMessageRepository.findMessagesByCursor(roomId, cursor, pageable);
+        ChatRoom chatRoomEntity = chatRoomRepository.findById(roomId)
+                .orElseThrow(()->new IllegalArgumentException("getRoomDetail : chatRoom repository error"));
+        List<ChatMessage> chatMessagesEntity = chatMessageRepository.findMessagesByCursor(roomId, cursor, pageable)
+                .orElseThrow(()->new IllegalArgumentException("getRoomDetail : chatRoom repository error"));
 
         return ChatRoomDetailResponse.of(chatRoomEntity, chatMessagesEntity);
     }
